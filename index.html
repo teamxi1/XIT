@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEAM XIT | GOD LEVEL HUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --accent: #0041ff;
+            --bg: #000205;
+            --glass: rgba(5, 8, 15, 0.9);
+            --border: rgba(0, 210, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'JetBrains Mono', monospace; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; /* Cambiado para acomodar la barra arriba */
+            justify-content: center; 
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- NUEVO: REPRODUCTOR DE MÚSICA SUPERIOR --- */
+        .music-bar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 25px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 2000;
+        }
+        .music-controls { display: flex; gap: 15px; align-items: center; }
+        .m-btn { 
+            background: none; border: 1px solid transparent; 
+            color: var(--primary); font-size: 1.1rem; cursor: pointer; 
+            transition: 0.3s; padding: 5px 10px; border-radius: 8px;
+        }
+        .m-btn:hover { border-color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .track-display { font-family: 'Orbitron'; font-size: 0.6rem; color: #fff; letter-spacing: 2px; }
+
+        /* FONDO DE PARTÍCULAS AVANZADO */
+        #particle-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; }
+
+        /* CONTENEDOR NIVEL DIOS */
+        .god-container {
+            position: relative; z-index: 10;
+            width: 92%; max-width: 450px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 60px 30px;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(0,0,0,1), inset 0 0 30px rgba(0, 210, 255, 0.1);
+            animation: godEntry 1.2s cubic-bezier(0.2, 1, 0.2, 1);
+        }
+
+        @keyframes godEntry {
+            from { opacity: 0; transform: scale(0.8) translateY(50px); filter: blur(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        .header-section { margin-bottom: 50px; }
+        .main-logo { 
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900; font-size: 2.8rem; 
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 8px; cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.5));
+        }
+
+        .member-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .member-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 40px 10px;
+            cursor: pointer;
+            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative; overflow: hidden;
+        }
+        .member-btn:hover {
+            background: rgba(0, 210, 255, 0.1);
+            border-color: var(--primary);
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 210, 255, 0.2);
+        }
+        .member-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: #888; }
+        .member-btn:hover .member-name { color: #fff; }
+
+        .view { display: none; }
+        .view.active { display: block; animation: viewFade 0.6s ease; }
+        @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .step-card { 
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+            padding: 25px; border-radius: 25px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .action-link { 
+            background: var(--primary); color: #000; padding: 12px 20px; 
+            border-radius: 15px; text-decoration: none; font-size: 0.7rem; 
+            font-weight: 900; transition: 0.3s;
+        }
+        .btn-final { 
+            display: block; width: 100%; padding: 25px; background: #0a0a0a;
+            color: #333; border-radius: 25px; text-decoration: none;
+            font-weight: 900; border: 1px solid #1a1a1a; margin-top: 25px;
+            transition: 0.8s; pointer-events: none;
+        }
+        .btn-final.ready { 
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000; pointer-events: auto; transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 210, 255, 0.5);
+        }
+
+        #admin-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .admin-box {
+            background: #050505; border: 1px solid var(--primary); width: 90%; max-width: 400px;
+            padding: 40px; border-radius: 40px; text-align: left;
+        }
+        input, select { 
+            width: 100%; padding: 18px; margin: 10px 0; background: #0f0f0f;
+            border: 1px solid #222; color: #fff; border-radius: 15px; font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="music-bar">
+        <div class="music-controls">
+            <button class="m-btn" onclick="skipMusic(-1)">◀◀</button>
+            <button id="p-toggle" class="m-btn" onclick="pToggle()">||</button>
+            <button class="m-btn" onclick="skipMusic(1)">▶▶</button>
+        </div>
+        <div id="m-status" class="track-display">SISTEMA OFFLINE</div>
+    </div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="admin-overlay">
+        <div class="admin-box">
+            <h2 style="color:var(--primary); font-size:1rem; margin-bottom:25px;">ADMIN_ROOT_ACCESS</h2>
+            <select id="adm-idx">
+                <option value="0">GAEL XIT</option>
+                <option value="1">MINATO MODZ</option>
+                <option value="2">YOWEL MODS</option>
+                <option value="3">LISANDRO MODZ</option>
+            </select>
+            <input type="text" id="adm-l1" placeholder="URL Red Social 1">
+            <input type="text" id="adm-l2" placeholder="URL Red Social 2">
+            <input type="text" id="adm-dl" placeholder="URL Descarga Directa">
+            <button onclick="syncGodMode()" style="width:100%; padding:20px; background:var(--primary); border:none; border-radius:15px; font-weight:900; margin-top:20px; cursor:pointer;">SUBIR A LA NUBE</button>
+            <p onclick="closeAdmin()" style="text-align:center; margin-top:25px; font-size:0.7rem; color:#444; cursor:pointer;">ABORTAR SESIÓN</p>
+        </div>
+    </div>
+
+    <div class="god-container">
+        <div class="header-section">
+            <div class="main-logo" onclick="handleAdmin()">TEAM XIT</div>
+            <p style="font-size: 0.6rem; color: #444; letter-spacing: 5px; text-transform: uppercase;">Security Node v10.0</p>
+        </div>
+
+        <div id="view-hub" class="view active">
+            <div class="member-grid">
+                <div class="member-btn" onclick="showSteps(0)"><div class="member-name">GAEL XIT</div></div>
+                <div class="member-btn" onclick="showSteps(1)"><div class="member-name">MINATO MODZ</div></div>
+                <div class="member-btn" onclick="showSteps(2)"><div class="member-name">YOWEL MODS</div></div>
+                <div class="member-btn" onclick="showSteps(3)"><div class="member-name">LISANDRO MODZ</div></div>
+            </div>
+        </div>
+
+        <div id="view-verify" class="view">
+            <h3 id="current-name" style="color:var(--primary); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:40px;"></h3>
+            <div class="step-card">
+                <span style="font-size:0.7rem;">VERIFICACIÓN ALFA</span>
+                <a href="#" id="url-1" target="_blank" class="action-link" onclick="triggerStep(2)">ACCEDER</a>
+            </div>
+            <div id="row-beta" class="step-card" style="opacity:0.05; pointer-events:none; transition:0.8s;">
+                <span style="font-size:0.7rem;">VERIFICACIÓN BETA</span>
+                <a href="#" id="url-2" target="_blank" class="action-link" onclick="triggerStep(3)">ACCEDER</a>
+            </div>
+            <a href="#" id="url-final" class="btn-final">DESBLOQUEAR ENLACE</a>
+            <p onclick="location.reload()" style="margin-top:30px; font-size:0.7rem; color:#444; cursor:pointer;">← REGRESAR AL CORE</p>
+        </div>
+    </div>
+
+    <script>
+        const FB_URL = "https://team-web-c79d1-default-rtdb.firebaseio.com/xit_god.json"; 
+        const names = ["GAEL XIT", "MINATO MODZ", "YOWEL MODS", "LISANDRO MODZ"];
+        let xit_data = [];
+
+        // --- LÓGICA DE MÚSICA NIVEL DIOS ---
+        let trackId = Math.floor(Math.random() * 7) + 1;
+        let bgMusic = new Audio(`MUSIC_${trackId}.m4a`);
+        bgMusic.loop = true;
+
+        function pToggle() {
+            const btn = document.getElementById('p-toggle');
+            const status = document.getElementById('m-status');
+            if (bgMusic.paused) {
+                bgMusic.play();
+                btn.innerText = "||";
+                status.innerText = `REPRODUCIENDO: MUSIC_${trackId}`;
+            } else {
+                bgMusic.pause();
+                btn.innerText = "▶";
+                status.innerText = "SISTEMA EN PAUSA";
+            }
+        }
+
+        function skipMusic(dir) {
+            bgMusic.pause();
+            trackId += dir;
+            if (trackId > 7) trackId = 1;
+            if (trackId < 1) trackId = 7;
+            bgMusic = new Audio(`MUSIC_${trackId}.m4a`);
+            bgMusic.loop = true;
+            bgMusic.play();
+            document.getElementById('p-toggle').innerText = "||";
+            document.getElementById('m-status').innerText = `REPRODUCIENDO: MUSIC_${trackId}`;
+        }
+
+        // Iniciar al primer click del usuario
+        document.addEventListener('click', () => { if(bgMusic.paused) pToggle(); }, { once: true });
+
+        async function initApp() {
+            try {
+                const r = await fetch(FB_URL);
+                const d = await r.json();
+                xit_data = d || names.map(n => ({name: n, l1: "#", l2: "#", dl: "#"}));
+            } catch(e) {}
+        }
+
+        function showSteps(i) {
+            document.getElementById('view-hub').classList.remove('active');
+            document.getElementById('view-verify').classList.add('active');
+            const p = xit_data[i];
+            document.getElementById('current-name').innerText = p.name;
+            document.getElementById('url-1').href = p.l1;
+            document.getElementById('url-2').href = p.l2;
+            document.getElementById('url-final').href = p.dl;
+        }
+
+        function triggerStep(s) {
+            setTimeout(() => {
+                if(s === 2) { 
+                    const rb = document.getElementById('row-beta');
+                    rb.style.opacity = "1"; rb.style.pointerEvents = "auto";
+                }
+                if(s === 3) { 
+                    const f = document.getElementById('url-final');
+                    f.classList.add('ready'); f.innerText = "ACCESO TOTAL CONCEDIDO";
+                }
+            }, 2000);
+        }
+
+        function handleAdmin() {
+            let count = 0; // Local counter
+            if(prompt("ROOT_PASSWORD:") === "SYNTAX") document.getElementById('admin-overlay').style.display = "flex";
+        }
+
+        function closeAdmin() { document.getElementById('admin-overlay').style.display = "none"; }
+
+        async function syncGodMode() {
+            const i = document.getElementById('adm-idx').value;
+            xit_data[i].l1 = document.getElementById('adm-l1').value;
+            xit_data[i].l2 = document.getElementById('adm-l2').value;
+            xit_data[i].dl = document.getElementById('adm-dl').value;
+            await fetch(FB_URL, { method: 'PUT', body: JSON.stringify(xit_data) });
+            alert("NUBE ACTUALIZADA - NIVEL DIOS ACTIVO");
+            location.reload();
+        }
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const particles = Array(80).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2, v: Math.random()*0.5 }));
+        function render() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#00d2ff';
+            particles.forEach(p => {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
+            });
+            requestAnimationFrame(render);
+        }
+        render();
+        initApp();
+    </script>
+</body>
+</html>
