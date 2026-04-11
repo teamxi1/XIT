@@ -3,304 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEAM XIT | GOD LEVEL HUB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <title>TEAM XIT | PREMIVM NVB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00d2ff;
-            --accent: #0041ff;
-            --bg: #000205;
-            --glass: rgba(5, 8, 15, 0.9);
-            --border: rgba(0, 210, 255, 0.2);
+            --primary: #00f2ff;
+            --accent: #7000ff;
+            --danger: #ff2d55;
+            --bg: #02040a;
+            --card: rgba(10, 15, 25, 0.7);
+            --border: rgba(0, 242, 255, 0.2);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'JetBrains Mono', monospace; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; /* Cambiado para acomodar la barra arriba */
-            justify-content: center; 
-            align-items: center;
-            overflow: hidden;
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+
+        /* NOTIFICACIONES PROFESIONALES */
+        #toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; width: 90%; max-width: 350px; pointer-events: none;
+        }
+        .toast {
+            background: rgba(10, 15, 25, 0.9); border: 1px solid var(--primary);
+            color: #fff; padding: 15px; border-radius: 12px; font-family: 'Orbitron';
+            font-size: 0.65rem; text-align: center; backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.2);
+            margin-bottom: 10px; animation: slideDown 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* MODAL DE CONTRASEÑA */
+        #password-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px); z-index: 5000; justify-content: center; align-items: center;
+        }
+        .modal-box {
+            background: #0a0c10; border: 1px solid var(--border); padding: 30px;
+            border-radius: 25px; width: 90%; max-width: 320px; text-align: center;
         }
 
-        /* --- NUEVO: REPRODUCTOR DE MÚSICA SUPERIOR --- */
         .music-bar {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 25px;
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 2000;
+            width: 100%; padding: 15px 30px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 1000;
         }
-        .music-controls { display: flex; gap: 15px; align-items: center; }
-        .m-btn { 
-            background: none; border: 1px solid transparent; 
-            color: var(--primary); font-size: 1.1rem; cursor: pointer; 
-            transition: 0.3s; padding: 5px 10px; border-radius: 8px;
-        }
-        .m-btn:hover { border-color: var(--primary); text-shadow: 0 0 10px var(--primary); }
-        .track-display { font-family: 'Orbitron'; font-size: 0.6rem; color: #fff; letter-spacing: 2px; }
+        .track-info { font-family: 'Orbitron'; font-size: 0.6rem; color: var(--primary); letter-spacing: 2px; }
 
-        /* FONDO DE PARTÍCULAS AVANZADO */
-        #particle-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; }
+        .scroll-wrapper { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 40px 0; width: 100%; }
+        .main-container { width: 90%; max-width: 480px; text-align: center; }
+        .brand-logo { font-family: 'Orbitron'; font-weight: 900; font-size: 2.2rem; background: linear-gradient(180deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
 
-        /* CONTENEDOR NIVEL DIOS */
-        .god-container {
-            position: relative; z-index: 10;
-            width: 92%; max-width: 450px;
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 60px 30px;
-            text-align: center;
-            box-shadow: 0 0 100px rgba(0,0,0,1), inset 0 0 30px rgba(0, 210, 255, 0.1);
-            animation: godEntry 1.2s cubic-bezier(0.2, 1, 0.2, 1);
-        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .card-btn { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 35px 15px; cursor: pointer; transition: 0.3s; }
+        .card-btn h3 { font-family: 'Orbitron'; font-size: 0.7rem; color: #fff; }
 
-        @keyframes godEntry {
-            from { opacity: 0; transform: scale(0.8) translateY(50px); filter: blur(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
+        /* ADMIN PANEL */
+        #admin-panel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(30px); z-index: 2000; justify-content: center; align-items: center; }
+        .admin-box { background: #0a0c10; border: 1px solid #1a202c; width: 90%; max-width: 420px; max-height: 90vh; padding: 25px; border-radius: 30px; display: flex; flex-direction: column; }
+        .admin-scroll { overflow-y: auto; flex: 1; margin: 15px 0; padding-right: 5px; }
 
-        .header-section { margin-bottom: 50px; }
-        .main-logo { 
-            font-family: 'Orbitron', sans-serif; 
-            font-weight: 900; font-size: 2.8rem; 
-            background: linear-gradient(to bottom, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 8px; cursor: pointer;
-            filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.5));
-        }
+        .manage-row { display: flex; align-items: center; justify-content: space-between; background: #0d1117; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #161b22; }
+        .trash-btn { background: rgba(255,45,85,0.1); border: 1px solid var(--danger); padding: 8px; border-radius: 8px; cursor: pointer; }
+        .trash-btn svg { fill: var(--danger); width: 14px; }
 
-        .member-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .member-btn {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            border-radius: 25px;
-            padding: 40px 10px;
-            cursor: pointer;
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            position: relative; overflow: hidden;
-        }
-        .member-btn:hover {
-            background: rgba(0, 210, 255, 0.1);
-            border-color: var(--primary);
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 210, 255, 0.2);
-        }
-        .member-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: #888; }
-        .member-btn:hover .member-name { color: #fff; }
+        input, select { width: 100%; padding: 12px; margin: 5px 0; background: #0d1117; border: 1px solid #161b22; color: #fff; border-radius: 10px; font-size: 0.8rem; }
+        .btn-add { background: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; }
+        .btn-update { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; }
 
-        .view { display: none; }
-        .view.active { display: block; animation: viewFade 0.6s ease; }
-        @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .view { display: none; width: 100%; }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .step-card { 
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
-            padding: 25px; border-radius: 25px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .action-link { 
-            background: var(--primary); color: #000; padding: 12px 20px; 
-            border-radius: 15px; text-decoration: none; font-size: 0.7rem; 
-            font-weight: 900; transition: 0.3s;
-        }
-        .btn-final { 
-            display: block; width: 100%; padding: 25px; background: #0a0a0a;
-            color: #333; border-radius: 25px; text-decoration: none;
-            font-weight: 900; border: 1px solid #1a1a1a; margin-top: 25px;
-            transition: 0.8s; pointer-events: none;
-        }
-        .btn-final.ready { 
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            color: #000; pointer-events: auto; transform: scale(1.02);
-            box-shadow: 0 0 50px rgba(0, 210, 255, 0.5);
-        }
-
-        #admin-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .admin-box {
-            background: #050505; border: 1px solid var(--primary); width: 90%; max-width: 400px;
-            padding: 40px; border-radius: 40px; text-align: left;
-        }
-        input, select { 
-            width: 100%; padding: 18px; margin: 10px 0; background: #0f0f0f;
-            border: 1px solid #222; color: #fff; border-radius: 15px; font-family: inherit;
-        }
+        .step-tile { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .btn-go { background: #fff; color: #000; text-decoration: none; padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 0.65rem; }
     </style>
 </head>
 <body>
 
-    <div class="music-bar">
-        <div class="music-controls">
-            <button class="m-btn" onclick="skipMusic(-1)">◀◀</button>
-            <button id="p-toggle" class="m-btn" onclick="pToggle()">||</button>
-            <button class="m-btn" onclick="skipMusic(1)">▶▶</button>
+    <div id="toast-container"></div>
+
+    <div id="password-modal">
+        <div class="modal-box">
+            <h3 style="font-family:'Orbitron'; font-size:0.7rem; color:var(--danger); margin-bottom:15px;">SEGURIDAD REQUERIDA</h3>
+            <p id="pass-msg" style="font-size:0.6rem; color:#888; margin-bottom:20px;"></p>
+            <input type="password" id="pass-input" placeholder="INGRESAR CLAVE" style="text-align:center; border-color:var(--danger);">
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="closePassModal()" style="flex:1; background:#111; color:#fff; border:none; padding:10px; border-radius:10px; cursor:pointer; font-size:0.6rem;">CANCELAR</button>
+                <button onclick="confirmPass()" style="flex:1; background:var(--danger); color:#fff; border:none; padding:10px; border-radius:10px; cursor:pointer; font-size:0.6rem; font-weight:900;">CONFIRMAR</button>
+            </div>
         </div>
-        <div id="m-status" class="track-display">SISTEMA OFFLINE</div>
+    </div>
+
+    <div class="music-bar">
+        <div class="m-controls">
+            <button onclick="changeTrack(-1)" style="background:none; border:none; color:#fff; cursor:pointer;">◀</button>
+            <button id="p-btn" onclick="togglePlay()" style="background:none; border:none; color:var(--primary); font-weight:900; cursor:pointer; margin:0 10px;">PLAY</button>
+            <button onclick="changeTrack(1)" style="background:none; border:none; color:#fff; cursor:pointer;">▶</button>
+        </div>
+        <div id="m-status" class="track-info">SYSTEM_ONLINE</div>
     </div>
 
     <canvas id="particle-canvas"></canvas>
 
-    <div id="admin-overlay">
+    <div id="admin-panel">
         <div class="admin-box">
-            <h2 style="color:var(--primary); font-size:1rem; margin-bottom:25px;">ADMIN_ROOT_ACCESS</h2>
-            <select id="adm-idx">
-                <option value="0">GAEL XIT</option>
-                <option value="1">MINATO MODZ</option>
-                <option value="2">YOWEL MODS</option>
-                <option value="3">LISANDRO MODZ</option>
-            </select>
-            <input type="text" id="adm-l1" placeholder="URL Red Social 1">
-            <input type="text" id="adm-l2" placeholder="URL Red Social 2">
-            <input type="text" id="adm-dl" placeholder="URL Descarga Directa">
-            <button onclick="syncGodMode()" style="width:100%; padding:20px; background:var(--primary); border:none; border-radius:15px; font-weight:900; margin-top:20px; cursor:pointer;">SUBIR A LA NUBE</button>
-            <p onclick="closeAdmin()" style="text-align:center; margin-top:25px; font-size:0.7rem; color:#444; cursor:pointer;">ABORTAR SESIÓN</p>
+            <h2 style="font-family:'Orbitron'; font-size:0.8rem; color:var(--primary); text-align:center;">ROOT_CONTROLLER</h2>
+            <div class="admin-scroll" id="admin-list"></div>
+            <div style="border-top: 1px solid #222; padding-top: 15px;">
+                <input type="text" id="new-name" placeholder="Nombre de nuevo miembro">
+                <button onclick="addNewMember()" class="btn-add">AÑADIR MIEMBRO</button>
+                <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
+                <select id="adm-sel"></select>
+                <input type="text" id="adm-l1" placeholder="URL Paso 1">
+                <input type="text" id="adm-l2" placeholder="URL Paso 2">
+                <input type="text" id="adm-dl" placeholder="URL Descarga">
+                <button onclick="updateCloud()" class="btn-update">GUARDAR LINKS</button>
+            </div>
+            <p onclick="closeAdmin()" style="text-align: center; margin-top: 15px; color: var(--danger); font-size: 0.6rem; cursor: pointer; font-weight: 900;">SALIR DEL PANEL</p>
         </div>
     </div>
 
-    <div class="god-container">
-        <div class="header-section">
-            <div class="main-logo" onclick="handleAdmin()">TEAM XIT</div>
-            <p style="font-size: 0.6rem; color: #444; letter-spacing: 5px; text-transform: uppercase;">Security Node v10.0</p>
-        </div>
+    <div class="scroll-wrapper">
+        <div class="main-container">
+            <div class="brand-box" onclick="checkAdminAccess()">
+                <h1 class="brand-logo">TEAM XIT</h1>
+                <p style="font-size: 0.5rem; color: #444; letter-spacing: 5px; margin-top:5px;">SECURE ACCESS HUB</p>
+            </div>
 
-        <div id="view-hub" class="view active">
-            <div class="member-grid">
-                <div class="member-btn" onclick="showSteps(0)"><div class="member-name">GAEL XIT</div></div>
-                <div class="member-btn" onclick="showSteps(1)"><div class="member-name">MINATO MODZ</div></div>
-                <div class="member-btn" onclick="showSteps(2)"><div class="member-name">YOWEL MODS</div></div>
-                <div class="member-btn" onclick="showSteps(3)"><div class="member-name">LISANDRO MODZ</div></div>
+            <div id="hub-view" class="view active">
+                <div class="grid" id="main-grid"></div>
             </div>
-        </div>
 
-        <div id="view-verify" class="view">
-            <h3 id="current-name" style="color:var(--primary); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:40px;"></h3>
-            <div class="step-card">
-                <span style="font-size:0.7rem;">VERIFICACIÓN ALFA</span>
-                <a href="#" id="url-1" target="_blank" class="action-link" onclick="triggerStep(2)">ACCEDER</a>
+            <div id="step-view" class="view">
+                <h2 id="target-name" style="font-family:'Orbitron'; color:var(--primary); margin-bottom:30px; font-size: 1.1rem;"></h2>
+                <div class="step-tile"><span>PASO 01</span><a href="#" id="l1" target="_blank" class="btn-go" onclick="nextStep(2)">IR</a></div>
+                <div id="row-2" class="step-tile" style="opacity: 0.1; pointer-events: none;"><span>PASO 02</span><a href="#" id="l2" target="_blank" class="btn-go" onclick="nextStep(3)">IR</a></div>
+                <a href="#" id="dl-final" style="display:block; width:100%; padding:20px; background:#0a0a0a; color:#333; border-radius:15px; text-decoration:none; font-weight:900; border:1px solid #1a1a1a; pointer-events:none; transition: 0.5s;">BLOQUEADO</a>
+                <p onclick="location.reload()" style="margin-top: 25px; font-size: 0.6rem; color: #444; cursor: pointer;">← VOLVER</p>
             </div>
-            <div id="row-beta" class="step-card" style="opacity:0.05; pointer-events:none; transition:0.8s;">
-                <span style="font-size:0.7rem;">VERIFICACIÓN BETA</span>
-                <a href="#" id="url-2" target="_blank" class="action-link" onclick="triggerStep(3)">ACCEDER</a>
-            </div>
-            <a href="#" id="url-final" class="btn-final">DESBLOQUEAR ENLACE</a>
-            <p onclick="location.reload()" style="margin-top:30px; font-size:0.7rem; color:#444; cursor:pointer;">← REGRESAR AL CORE</p>
         </div>
     </div>
 
     <script>
-        const FB_URL = "https://team-web-c79d1-default-rtdb.firebaseio.com/xit_god.json"; 
-        const names = ["GAEL XIT", "MINATO MODZ", "YOWEL MODS", "LISANDRO MODZ"];
-        let xit_data = [];
+        const FB_URL = "https://team-web-c79d1-default-rtdb.firebaseio.com/xit_god.json";
+        let cloudData = [];
+        let itemToDelete = null;
+        let loginType = ""; // "admin" o "delete"
 
-        // --- LÓGICA DE MÚSICA NIVEL DIOS ---
-        let trackId = Math.floor(Math.random() * 7) + 1;
-        let bgMusic = new Audio(`MUSIC_${trackId}.m4a`);
-        bgMusic.loop = true;
+        // --- SISTEMA DE NOTIFICACIONES PROFESIONAL ---
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerText = msg;
+            container.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
 
-        function pToggle() {
-            const btn = document.getElementById('p-toggle');
-            const status = document.getElementById('m-status');
-            if (bgMusic.paused) {
-                bgMusic.play();
-                btn.innerText = "||";
-                status.innerText = `REPRODUCIENDO: MUSIC_${trackId}`;
+        // --- SISTEMA DE MODAL DE CONTRASEÑA ---
+        function openPassModal(type, index = null) {
+            loginType = type;
+            itemToDelete = index;
+            document.getElementById('pass-input').value = "";
+            document.getElementById('pass-msg').innerText = type === "admin" ? "ACCESO A PANEL DE CONTROL" : `BORRAR A ${cloudData[index].name}`;
+            document.getElementById('password-modal').style.display = "flex";
+            document.getElementById('pass-input').focus();
+        }
+
+        function closePassModal() { document.getElementById('password-modal').style.display = "none"; }
+
+        function confirmPass() {
+            const val = document.getElementById('pass-input').value;
+            if(loginType === "admin") {
+                if(val === "SYNTAX") {
+                    document.getElementById('admin-panel').style.display = "flex";
+                    closePassModal();
+                    showToast("ACCESO RAÍZ CONCEDIDO");
+                } else { showToast("ERROR: CLAVE INVÁLIDA"); }
             } else {
-                bgMusic.pause();
-                btn.innerText = "▶";
-                status.innerText = "SISTEMA EN PAUSA";
+                if(val === "PAPUS") {
+                    deleteConfirmed();
+                    closePassModal();
+                } else { showToast("ERROR: AUTORIZACIÓN DENEGADA"); }
             }
         }
 
-        function skipMusic(dir) {
-            bgMusic.pause();
-            trackId += dir;
-            if (trackId > 7) trackId = 1;
-            if (trackId < 1) trackId = 7;
-            bgMusic = new Audio(`MUSIC_${trackId}.m4a`);
-            bgMusic.loop = true;
-            bgMusic.play();
-            document.getElementById('p-toggle').innerText = "||";
-            document.getElementById('m-status').innerText = `REPRODUCIENDO: MUSIC_${trackId}`;
+        // --- FIREBASE & CORE ---
+        async function loadCloud() {
+            const r = await fetch(FB_URL);
+            cloudData = await r.json() || [];
+            renderMain();
+            renderAdmin();
         }
 
-        // Iniciar al primer click del usuario
-        document.addEventListener('click', () => { if(bgMusic.paused) pToggle(); }, { once: true });
-
-        async function initApp() {
-            try {
-                const r = await fetch(FB_URL);
-                const d = await r.json();
-                xit_data = d || names.map(n => ({name: n, l1: "#", l2: "#", dl: "#"}));
-            } catch(e) {}
+        function renderMain() {
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = cloudData.map((m, i) => `<div class="card-btn" onclick="startVerification(${i})"><h3>${m.name}</h3></div>`).join('');
         }
 
-        function showSteps(i) {
-            document.getElementById('view-hub').classList.remove('active');
-            document.getElementById('view-verify').classList.add('active');
-            const p = xit_data[i];
-            document.getElementById('current-name').innerText = p.name;
-            document.getElementById('url-1').href = p.l1;
-            document.getElementById('url-2').href = p.l2;
-            document.getElementById('url-final').href = p.dl;
+        function renderAdmin() {
+            const list = document.getElementById('admin-list');
+            const sel = document.getElementById('adm-sel');
+            list.innerHTML = cloudData.map((m, i) => `
+                <div class="manage-row">
+                    <span style="font-size:0.7rem; font-weight:700;">${m.name}</span>
+                    ${m.name !== "GAEL XIT" ? `
+                        <div class="trash-btn" onclick="openPassModal('delete', ${i})">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </div>
+                    ` : '<div></div>'}
+                </div>`).join('');
+            sel.innerHTML = cloudData.map((m, i) => `<option value="${i}">${m.name}</option>`).join('');
         }
 
-        function triggerStep(s) {
+        async function deleteConfirmed() {
+            cloudData.splice(itemToDelete, 1);
+            await saveToFirebase();
+            showToast("USUARIO ELIMINADO");
+            loadCloud();
+        }
+
+        async function addNewMember() {
+            const n = document.getElementById('new-name');
+            if(!n.value) return showToast("ERROR: NOMBRE VACÍO");
+            cloudData.push({ name: n.value.toUpperCase(), l1: "#", l2: "#", dl: "#" });
+            await saveToFirebase();
+            n.value = "";
+            showToast("NUEVO MIEMBRO REGISTRADO");
+            loadCloud();
+        }
+
+        async function updateCloud() {
+            const i = document.getElementById('adm-sel').value;
+            cloudData[i].l1 = document.getElementById('adm-l1').value || "#";
+            cloudData[i].l2 = document.getElementById('adm-l2').value || "#";
+            cloudData[i].dl = document.getElementById('adm-dl').value || "#";
+            await saveToFirebase();
+            showToast("DATOS SINCRONIZADOS");
+        }
+
+        async function saveToFirebase() { await fetch(FB_URL, { method: 'PUT', body: JSON.stringify(cloudData) }); }
+
+        function startVerification(i) {
+            const p = cloudData[i];
+            if(p.dl === "#") return showToast("SISTEMA: SIN ENLACES ACTIVOS");
+            document.getElementById('hub-view').classList.remove('active');
+            document.getElementById('step-view').classList.add('active');
+            document.getElementById('target-name').innerText = p.name;
+            document.getElementById('l1').href = p.l1; document.getElementById('l2').href = p.l2;
+            document.getElementById('dl-final').href = p.dl;
+        }
+
+        function nextStep(s) {
+            showToast(`VERIFICANDO PASO 0${s-1}...`);
             setTimeout(() => {
-                if(s === 2) { 
-                    const rb = document.getElementById('row-beta');
-                    rb.style.opacity = "1"; rb.style.pointerEvents = "auto";
+                if(s === 2) { document.getElementById('row-2').style.opacity = "1"; document.getElementById('row-2').style.pointerEvents = "auto"; }
+                else if(s === 3) { 
+                    const f = document.getElementById('dl-final');
+                    f.style.background = "var(--primary)"; f.style.color="#000"; f.style.pointerEvents = "auto"; f.innerText = "CONCEDIDO"; 
+                    showToast("ACCESO TOTAL DESBLOQUEADO");
                 }
-                if(s === 3) { 
-                    const f = document.getElementById('url-final');
-                    f.classList.add('ready'); f.innerText = "ACCESO TOTAL CONCEDIDO";
-                }
-            }, 2000);
+            }, 3000);
         }
 
-        function handleAdmin() {
-            let count = 0; // Local counter
-            if(prompt("ROOT_PASSWORD:") === "SYNTAX") document.getElementById('admin-overlay').style.display = "flex";
-        }
+        function checkAdminAccess() { openPassModal('admin'); }
+        function closeAdmin() { document.getElementById('admin-panel').style.display = "none"; }
 
-        function closeAdmin() { document.getElementById('admin-overlay').style.display = "none"; }
+        // --- AUDIO ENGINE ---
+        let tid = 1; let audio = new Audio(`MUSIC_${tid}.m4a`);
+        function togglePlay() { const b = document.getElementById('p-btn'); audio.paused ? (audio.play(), b.innerText="PAUSE") : (audio.pause(), b.innerText="PLAY"); }
+        function changeTrack(d) { audio.pause(); tid += d; if(tid > 7) tid = 1; if(tid < 1) tid = 7; audio = new Audio(`MUSIC_${tid}.m4a`); audio.play(); }
 
-        async function syncGodMode() {
-            const i = document.getElementById('adm-idx').value;
-            xit_data[i].l1 = document.getElementById('adm-l1').value;
-            xit_data[i].l2 = document.getElementById('adm-l2').value;
-            xit_data[i].dl = document.getElementById('adm-dl').value;
-            await fetch(FB_URL, { method: 'PUT', body: JSON.stringify(xit_data) });
-            alert("NUBE ACTUALIZADA - NIVEL DIOS ACTIVO");
-            location.reload();
-        }
-
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
+        // CANVAS
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const particles = Array(80).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2, v: Math.random()*0.5 }));
-        function render() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#00d2ff';
-            particles.forEach(p => {
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-            });
-            requestAnimationFrame(render);
+        const pts = Array(30).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: 0.15 }));
+        function loop() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(0, 242, 255, 0.2)";
+            pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill(); p.y -= p.v; if(p.y < 0) p.y = canvas.height; });
+            requestAnimationFrame(loop);
         }
-        render();
-        initApp();
+        loop(); loadCloud();
     </script>
 </body>
 </html>
